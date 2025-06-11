@@ -96,22 +96,43 @@ class SmartphoneController extends Controller
         $smartphones = Smartphone::all();
         $criterias = Criteria::all();
 
-        // Dapatkan matriks normalisasi
         $normalizedMatrix = $this->normalizeMatrix($smartphones, $criterias);
-
-        // Hitung nilai preferensi (ranking)
+        $weightedMatrix = $this->calculateWeightedMatrix($normalizedMatrix, $criterias);
         $ranking = $this->calculateSAW($smartphones, $criterias);
 
         return view('smartphones.calculation', [
             'smartphones' => $smartphones,
             'criterias' => $criterias,
             'normalizedMatrix' => $normalizedMatrix,
+            'weightedMatrix' => $weightedMatrix,
             'ranking' => $ranking,
             'maxMinValues' => $this->getMaxMinValues($smartphones, $criterias)
         ]);
     }
 
-    // Tambahkan ini ke bagian private class
+    private function calculateWeightedMatrix($normalizedMatrix, $criterias)
+    {
+        $weighted = [];
+
+        foreach ($normalizedMatrix as $item) {
+            $weightedRow = [
+                'id' => $item['id'],
+                'name' => $item['name'],
+                'brand' => $item['brand'],
+                'weighted' => []
+            ];
+
+            foreach ($criterias as $criteria) {
+                $weightedRow['weighted'][$criteria->name] =
+                    $item['normalized'][$criteria->name] * $criteria->weight;
+            }
+
+            $weighted[] = $weightedRow;
+        }
+
+        return $weighted;
+    }
+
     private function getMaxMinValues($smartphones, $criterias)
     {
         $maxMin = [];
