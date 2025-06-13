@@ -20,7 +20,7 @@ A Decision Support System (DSS) using the Simple Additive Weighting (SAW) method
 
 1. Clone the repository:
     ```
-    git clone https://github.com/yourusername/SPK-SAW.git
+    git clone https://github.com/f3brysan/SPK-SAW.git
     cd SPK-SAW
     ```
 
